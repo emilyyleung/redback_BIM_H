@@ -17,7 +17,7 @@ function resizeCanvas() {
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
 
-  sceneManager.onWindowResize();
+  SceneManager.onWindowResize();
 }
 
 function render() {
