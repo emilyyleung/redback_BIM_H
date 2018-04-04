@@ -5,7 +5,7 @@ function GeneralLights(scene) {
   const directionalLight = new THREE.DirectionalLight( 0xffeedd );
   directionalLight.position.set( 0, 0, 1 ).normalize();
 
-  scene.add( ambient );
+  scene.add( light );
 
   scene.add( directionalLight );
 }
