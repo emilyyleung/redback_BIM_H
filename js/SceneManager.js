@@ -10,6 +10,9 @@ function SceneManager(canvas) {
   const camera = buildCamera(screenDimensions);
   const sceneSubjects = createSceneSubjects(scene);
 
+  const windowHalfX = window.innerWidth / 2;
+  const windowHalfY = window.innerHeight / 2;
+
   function buildScene() {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#000");
@@ -53,16 +56,24 @@ function SceneManager(canvas) {
     renderer.render( scene, camera );
   }
 
+  // function onWindowResize() {
+  //   const { width, height } = canvas;
+  //
+  //   screenDimensions.width = width;
+  //   screenDimensions.height = height;
+  //
+  //   camera.aspect = width / height;
+  //   camera.updateProjectionMatrix();
+  //
+  //   renderer.setSize( width, height );
+  //
+  // }
+
   function onWindowResize() {
-    const { width, height } = canvas;
-
-    screenDimensions.width = width;
-    screenDimensions.height = height;
-
-    camera.aspect = width / height;
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
-    renderer.setSize( width, height );
-
+    renderer.setSize( window.innerWidth, window.innerHeight );
   }
 }
