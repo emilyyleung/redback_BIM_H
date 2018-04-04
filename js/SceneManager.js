@@ -56,13 +56,13 @@ function SceneManager(canvas) {
   function onWindowResize() {
     const { width, height } = canvas;
 
-    screenDimensions.width / 2 = width;
-    screenDimensions.height / 2 = height;
+    screenDimensions.width = width;
+    screenDimensions.height = height;
 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 
     renderer.setSize( width, height );
-    
+
   }
 }
