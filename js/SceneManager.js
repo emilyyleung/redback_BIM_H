@@ -1,8 +1,8 @@
 function SceneManager(canvas) {
 
   const screenDimensions = {
-    width: canvas.width,
-    height: canvas.height
+    width: canvas.innerWidth,
+    height: canvas.innerHeight
   }
 
   const scene = buildScene();
@@ -56,12 +56,13 @@ function SceneManager(canvas) {
   function onWindowResize() {
     const { width, height } = canvas;
 
-    screenDimensions.width = width;
-    screenDimensions.height = height;
+    screenDimensions.width / 2 = width;
+    screenDimensions.height / 2 = height;
 
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
 
     renderer.setSize( width, height );
+    
   }
 }
