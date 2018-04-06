@@ -6,11 +6,22 @@
 		<style>
 			body { margin: 0; }
 			canvas { width: 100%; height: 100% }
+			#info {
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        text-align: center;
+        z-index: 100;
+        display:block;
+      }
 		</style>
 	</head>
 	<body>
 		<!-- Canvas for where Three.js viewport sits -->
 		<!-- <canvas id="canvas"></canvas> -->
+
+		<!-- JQuery -->
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 
 		<!-- Three.js -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script>
@@ -113,6 +124,8 @@
 						// console.log("INTERSECTED")
 						console.log(intersects[0].object.name)
 
+						$("#info").text(intersects[0].object.name)
+
 						if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
 
 						INTERSECTED = intersects[ 0 ].object;
@@ -142,5 +155,8 @@
 			animate();
 			console.log("END SCRIPT");
 		</script>
+
+		<div id="info"></div>
+
 	</body>
 </html>
