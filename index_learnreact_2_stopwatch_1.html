@@ -1,0 +1,74 @@
+<div id="root"></div>
+
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+<style>
+  .button {
+    font-family: Courier, sans-serif;
+  }
+</style>
+
+<script type="text/babel">
+  const rootElement = document.getElementById('root');
+
+  class StopWatch extends React.Component {
+    // INITIAL STATE
+    state = {lapse: 0, running: false}
+    // WHEN CLICKED ON START
+    handleRunClick = () => {
+      this.setState(state => {
+        // IF THE STOPWATCH IS GOING, STOP THE TIMER AT THAT POINT
+        if (state.running) {
+          clearInterval(this.timer)
+        } else {
+          const startTime = Date.now() - this.state.lapse
+          this.timer = setInterval(() => {
+            this.setState({
+              lapse: Date.now() - startTime,
+            })
+          })
+        }
+        return {running: !state.running}
+      })
+    }
+    handleClearClick = () => {
+      clearInterval(this.timer)
+      this.setState({
+        lapse: 0,
+        running: false
+      })
+    }
+
+    render() {
+      const {lapse, running} = this.state
+      const buttonStyles = {
+        border: '1px solid #ccc',
+        background: '#fff',
+        fontSize: '2em',
+        padding: 15,
+        margin: 5,
+        width: 200
+      }
+      return (
+        <div style={{textAlign: 'center'}} >
+          <label className="button" style={{fontSize: '5em', display: 'block'}} >{lapse} ms</label>
+          <button className="button" style={buttonStyles} onClick={this.handleRunClick} >{running ? 'Pause' : 'Start'}</button>
+          <button className="button" style={buttonStyles} onClick={this.handleClearClick} >clear</button>
+        </div>
+      )
+    }
+  }
+
+  function renderApp() {
+    ReactDOM.render(
+      <StopWatch />,
+      document.getElementById('root')
+    )
+  }
+
+  renderApp()
+
+</script>
