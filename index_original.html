@@ -27,7 +27,8 @@
 		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 
 		<!-- Three.js -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script>
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script> -->
+		<script src="js/libs/three.min.js"></script>
 
 		<!-- Three.js controls -->
 		<script src="js/libs/Raycaster.js"></script>
@@ -128,6 +129,8 @@
 						console.log(intersects[0].object.name)
 
 						$("#info").text(intersects[0].object.name)
+						
+						intersects[0].object.traverse(function( object ) { object.visible = true } );
 
 						if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
 
