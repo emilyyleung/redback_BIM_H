@@ -1,0 +1,379 @@
+<div id="root"></div>
+
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+<style>
+  .button {
+    font-family: Courier, sans-serif;
+    text-align: center;
+  }
+</style>
+
+<script type="text/babel">
+  const rootElement = document.getElementById('root');
+  const buttonStyles = {
+    border: '1px solid #ccc',
+    background: '#fff',
+    fontSize: '1em',
+    padding: 15,
+    margin: 5,
+    width: 200
+  }
+
+  // ---------------------------------------------------------------------------
+
+  class UserCompany extends React.Component {
+    state = {company: undefined, loaded: false}
+    componentDidMount() {
+      axios({
+        url: 'https://api.github.com/graphql',
+        method: 'post',
+        data: {
+          query: `{
+            user(login: "${this.props.username}") {
+              company
+            }
+          }`
+        },
+        headers: {
+          Authorization: `bearer b1bb23abfca52f45689e729047ee040458c7686a`
+        }
+      }).then(response => {
+        this.setState({
+          loaded: true,
+          company: response.data.data.user.company
+        })
+      })
+    }
+    render() {
+      return this.state.loaded ? this.state.company || 'Unknown' : '...'
+    }
+  }
+
+  const username = 'kentcdodds'
+
+  // ---------------------------------------------------------------------------
+
+  class ShoppingList extends React.Component {
+  static allItems = [
+    { id: "a", value: "apple" },
+    { id: "o", value: "orange" },
+    { id: "g", value: "grape" },
+    { id: "p", value: "pear" }
+  ];
+
+  state = { items: [] };
+
+  addItem = () => {
+    this.setState(({ items }) => ({
+      items: [...items, ShoppingList.allItems.find(i => !items.includes(i))]
+    }));
+  };
+
+  removeItem = item => {
+    this.setState(({ items }) => ({
+      items: items.filter(i => i !== item)
+    }));
+  };
+
+  render() {
+    const { items } = this.state;
+    return (
+      <div className="button">
+        <button
+          disabled={items.length >= ShoppingList.allItems.length}
+          onClick={this.addItem}
+        >
+          +
+        </button>
+        {items.map((i, index) => (
+          <div key={i.id}>
+            <button onClick={() => this.removeItem(i)}>-</button>
+            {i.value}:
+            <input/>
+          </div>
+        ))}
+      </div>
+    )
+  }
+}
+
+  // ---------------------------------------------------------------------------
+
+  class MyList extends React.Component {
+    static allItems = [
+      {id: 'a', value: 'apple'},
+      {id: 'o', value: 'orange'},
+      {id: 'g', value: 'grape'},
+      {id: 'p', value: 'pear'}
+    ]
+
+    render() {
+      return (
+        <div>
+          {MyList.allItems.map(item => (
+            <div key={item.id} >{item.value}</div>
+          ))}
+        </div>
+      )
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  class MyFancyForm extends React.Component {
+    static availableOptions = [
+      'apple',
+      'grape',
+      'cherry',
+      'orange',
+      'pear',
+      'peach'
+    ]
+
+    state = {multiline: '', commaSeparated: '', multiSelect: []}
+
+    handleCommaSeparatedChanged = event => {
+      // console.log(event.target.value)
+      // To extract value from event.target:
+      const {value} = event.target
+      const allVals = value
+        .split(',')
+        .map(v => v.trim())
+        .filter(Boolean)
+      this.setState({
+        commaSeparated: value,
+        multiline: allVals
+          .join('\n'),
+        multiSelect: allVals
+          .filter(v => MyFancyForm.availableOptions.includes(v)
+        )
+      })
+    }
+
+    handleMultilineChanged = event => {
+      // console.log('handleMultilineChanged')
+      const {value} = event.target
+      const allVals = value
+        .split('\n')
+        .map(v => v.trim())
+        .filter(Boolean)
+      this.setState({
+        multiline: value,
+        commaSeparated: allVals
+          .join(', '),
+        multiSelect: allVals
+          .filter(v => MyFancyForm.availableOptions.includes(v)
+        )
+      })
+    }
+
+    handleMultiSelectChanged = event => {
+      // console.log('handleMultiSelectChanged')
+      console.log(event.target.value)
+
+      const allVals = Array.from(
+        event.target.selectedOptions
+      ).map(o => o.value)
+      this.setState({
+        multiSelect: allVals,
+        multiLine: allVals.join('\n'),
+        commaSeparated: allVals.join(',')
+      })
+    }
+
+    render() {
+      const {commaSeparated, multiline, multiSelect} = this.state
+      return (
+        <form className="button">
+          <div>
+            <label>
+              comma separated values:
+              <br />
+              <input type="text" value={commaSeparated} onChange={this.handleCommaSeparatedChanged} />
+            </label>
+          </div>
+          <div>
+            <label>
+              multiline values:
+              <br />
+              <textarea
+                value={multiline}
+                rows={MyFancyForm.availableOptions.length}
+                onChange={this.handleMultilineChanged}
+              />
+            </label>
+          </div>
+          <div>
+            <label>
+              multiSelect values:
+              <br />
+              <select
+                multiple
+                value={multiSelect}
+                size={MyFancyForm.availableOptions.length} onChange={this.handleMultiSelectChanged}
+              >
+                {MyFancyForm.availableOptions.map(optionValue => (<option key={optionValue} value={optionValue}>{optionValue}</option>))}
+              </select>
+            </label>
+          </div>
+        </form>
+      )
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  class NameForm extends React.Component {
+    handleSubmit = event => {
+      event.preventDefault()
+      console.log(this.inputNode.value)
+    }
+    render() {
+      return (
+        <form className="button" onSubmit={this.handleSubmit}>
+          <label>
+            Name: <input className="button" type="text" ref={node => this.inputNode = node} />
+          </label>
+          <button className="button" type="submit">Submit</button>
+        </form>
+      )
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  class CustomTextInput extends React.Component {
+    constructor(props) {
+      super(props);
+      // create a ref to store the textInput DOM element
+      this.textInput = React.createRef();
+      this.focusTextInput = this.focusTextInput.bind(this);
+    }
+
+    focusTextInput() {
+      // Explicitly focus the text input using the raw DOM API
+      // Note: we're accessing "current" to get the DOM node
+      this.textInput.current.focus();
+      console.log(this.textInput.current.value)
+    }
+
+    render() {
+      // tell React that we want the associate the <input> ref
+      // with the `textInput` that we created in the constructor
+      return (
+        <div className="button" >
+          <input className="button" type="text" ref={this.textInput} />
+          <input className="button" type="button" value="Focus the text input" onClick={this.focusTextInput} />
+        </div>
+      )
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  class Counter extends React.Component {
+    state = {count: 0}
+    handleclick = () => {
+      this.setState(({count}) => ({
+        count: count + 1
+      }))
+    }
+    render() {
+      return (
+        <div className="button">
+          <button onClick={this.handleclick}>{this.state.count}</button>
+        </div>
+      )
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  class StopWatch extends React.Component {
+    // INITIAL STATE
+    state = {lapse: 0, running: false}
+    // WHEN CLICKED ON START
+    handleRunClick = () => {
+      this.setState(state => {
+        // IF THE STOPWATCH IS GOING, STOP THE TIMER AT THAT POINT
+        if (state.running) {
+          clearInterval(this.timer)
+        } else {
+          const startTime = Date.now() - this.state.lapse
+          this.timer = setInterval(() => {
+            this.setState({
+              lapse: Date.now() - startTime,
+            }, () => {
+              console.log(this.state.lapse)
+            })
+          })
+        }
+        return {running: !state.running}
+      })
+    }
+    handleClearClick = () => {
+      clearInterval(this.timer)
+      this.setState({
+        lapse: 0,
+        running: false
+      })
+      console.log("CLEARED STOPWATCH")
+    }
+
+    render() {
+      const {lapse, running} = this.state
+      //
+      return (
+        <div style={{textAlign: 'center'}} >
+          <label className="button" style={{fontSize: '2em', display: 'block'}} >{lapse} ms</label>
+          <button className="button" style={buttonStyles} onClick={this.handleRunClick} >{running ? 'Pause' : 'Start'}</button>
+          <button className="button" style={buttonStyles} onClick={this.handleClearClick} >clear</button>
+        </div>
+      )
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  class App extends React.Component {
+    render() {
+      return (
+        <div>
+          <Counter/>
+          <hr/>
+          <StopWatch/>
+          <hr/>
+          <CustomTextInput/>
+          <hr/>
+          <NameForm/>
+          <hr/>
+          <MyFancyForm/>
+          <hr/>
+          <ShoppingList />
+          <hr/>
+          <div>
+            <div className="button" >
+              {`@${username} works at `}
+              <UserCompany username={username} />
+            </div>
+          </div>
+        </div>
+      )
+    }
+  }
+
+  function renderApp() {
+    ReactDOM.render(
+      <App />,
+      document.getElementById('root')
+    )
+  }
+
+  renderApp()
+
+</script>
